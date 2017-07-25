@@ -1,5 +1,6 @@
 package le.bluetooth.example.com.bluetoothble;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -14,6 +15,9 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.permissionlib.util.AndroidMPermissionHelper;
 
 import java.util.List;
 import java.util.UUID;
@@ -100,22 +104,35 @@ public class BluetoothLeHelper {
         return mScanning;
     }
 
+
+
     /**
      * 开始扫描
      *
      * @param mLeScanCallback
      * @param scantPeriod
      */
-    public void startLeScan(final ScanCallBackListener mLeScanCallback, long scantPeriod) {
-        mScanning = true;
-        mBluetoothAdapter.startLeScan(mLeScanCallback);
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+    public void startLeScan(final ScanCallBackListener mLeScanCallback, final long scantPeriod) {
+        AndroidMPermissionHelper.checkPermission(context, new AndroidMPermissionHelper.PermissionCallBack() {
             @Override
-            public void run() {
-                stopLeScan(mLeScanCallback);
-                mLeScanCallback.onScanTimeout();
+            public void onGranted() {
+                mScanning = true;
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        stopLeScan(mLeScanCallback);
+                        mLeScanCallback.onScanTimeout();
+                    }
+                }, scantPeriod);
+                mBluetoothAdapter.startLeScan(mLeScanCallback);
             }
-        }, scantPeriod);
+
+            @Override
+            public void onDenied() {
+                Toast.makeText(context,"获取位置权限失败",Toast.LENGTH_LONG).show();
+            }
+        }, Manifest.permission.ACCESS_COARSE_LOCATION);
+
     }
 
     /**
