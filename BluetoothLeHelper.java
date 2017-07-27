@@ -40,6 +40,7 @@ public class BluetoothLeHelper {
     private BluetoothGatt mBluetoothGatt;
     private GattAdapter gattListener;
     private int mConnectionState = BluetoolthConstant.STATE_DISCONNECTED;
+    Handler handler = new Handler(Looper.getMainLooper());
 
     private BluetoothLeHelper(Context context) {
         this.context = context.getApplicationContext();
@@ -105,7 +106,6 @@ public class BluetoothLeHelper {
     }
 
 
-
     /**
      * 开始扫描
      *
@@ -129,7 +129,7 @@ public class BluetoothLeHelper {
 
             @Override
             public void onDenied() {
-                Toast.makeText(context,"获取位置权限失败",Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "获取位置权限失败", Toast.LENGTH_LONG).show();
             }
         }, Manifest.permission.ACCESS_COARSE_LOCATION);
 
@@ -202,11 +202,10 @@ public class BluetoothLeHelper {
      * released properly.
      */
     public void close() {
-        if (mBluetoothGatt == null) {
+        if (mBluetoothGatt != null) {
             mBluetoothGatt.close();
             mBluetoothGatt = null;
         }
-
     }
 
     /**
@@ -283,73 +282,101 @@ public class BluetoothLeHelper {
      */
     public List<BluetoothGattService> getSupportedGattServices() {
         if (mBluetoothGatt == null) return null;
-
         return mBluetoothGatt.getServices();
     }
 
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                Log.d(TAG, "Connected to GATT server.");
-                mConnectionState = BluetoolthConstant.STATE_CONNECTED;
-                if (mBluetoothGatt != null) {
-                    gattListener.onConnected();
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, final int newState) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (newState == BluetoothProfile.STATE_CONNECTED) {
+                        Log.d(TAG, "Connected to GATT server.");
+                        mConnectionState = BluetoolthConstant.STATE_CONNECTED;
+                        if (gattListener != null) {
+                            gattListener.onConnected();
+                        }
+                        if (mBluetoothGatt != null) {
+                            mBluetoothGatt.discoverServices();
+                        }
+                    } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                        Log.d(TAG, "Disconnected from GATT server.");
+                        mConnectionState = BluetoolthConstant.STATE_DISCONNECTED;
+                        if (gattListener != null) {
+                            gattListener.onDisconnected();
+                        }
+
+                    }
                 }
-                if (mBluetoothGatt != null) {
-                    mBluetoothGatt.discoverServices();
+            });
+
+        }
+
+        @Override
+        public void onServicesDiscovered(BluetoothGatt gatt, final int status) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(TAG, "onServicesDiscovered received: " + status);
+                    if (status == BluetoothGatt.GATT_SUCCESS && gattListener != null) {
+                        gattListener.onServicesDiscovered();
+                    }
                 }
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.d(TAG, "Disconnected from GATT server.");
-                mConnectionState = BluetoolthConstant.STATE_DISCONNECTED;
-                if (mBluetoothGatt != null) {
-                    gattListener.onDisconnected();
+            });
+        }
+
+        @Override
+        public void onCharacteristicWrite(BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic, final int status) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "onCharacteristicWrite");
+                    if (gattListener != null) {
+                        gattListener.onCharacteristicWrite(characteristic, status);
+                    }
                 }
-
-            }
-        }
-
-        @Override
-        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            Log.d(TAG, "onServicesDiscovered received: " + status);
-            if (status == BluetoothGatt.GATT_SUCCESS && mBluetoothGatt != null) {
-                gattListener.onServicesDiscovered();
-            }
-        }
-
-        @Override
-        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            Log.i(TAG, "onCharacteristicWrite");
-            if (mBluetoothGatt != null) {
-                gattListener.onCharacteristicWrite(characteristic, status);
-            }
+            });
         }
 
 
         @Override
-        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            Log.i(TAG, "onCharacteristicRead");
-            if (mBluetoothGatt != null) {
-                gattListener.onCharacteristicRead(characteristic, status);
-            }
+        public void onCharacteristicRead(BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic, final int status) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "onCharacteristicRead");
+                    if (gattListener != null) gattListener.onCharacteristicRead(characteristic, status);
+                }
+            });
         }
 
         @Override
-        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            Log.i(TAG, "onCharacteristicChanged");
-            if (mBluetoothGatt != null) {
-                gattListener.onCharacteristicChanged(characteristic);
-            }
+        public void onCharacteristicChanged(BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "onCharacteristicChanged");
+                    if (gattListener != null) {
+                        gattListener.onCharacteristicChanged(characteristic);
+                    }
+                }
+            });
+
         }
 
         @Override
-        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
-            Log.i(TAG, "onReadRemoteRssi");
-            if (mBluetoothGatt != null) {
-                gattListener.onReadRssi(rssi, status);
-            }
+        public void onReadRemoteRssi(BluetoothGatt gatt, final int rssi, final int status) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "onReadRemoteRssi");
+                    if (gattListener != null) {
+                        gattListener.onReadRssi(rssi, status);
+                    }
+                }
+            });
         }
-
     };
 
     public interface ScanCallBackListener extends BluetoothAdapter.LeScanCallback {
