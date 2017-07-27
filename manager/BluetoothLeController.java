@@ -1,4 +1,4 @@
-package le.bluetooth.example.com.bluetoothble;
+package le.bluetooth.example.com.bluetoothble.manager;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;

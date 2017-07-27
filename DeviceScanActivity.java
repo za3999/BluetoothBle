@@ -16,20 +16,13 @@
 
 package le.bluetooth.example.com.bluetoothble;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.ScanCallback;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,12 +33,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.permissionlib.util.AndroidMPermissionHelper;
-
 import java.util.ArrayList;
-import java.util.UUID;
 
 import le.bluetooth.example.com.bluetoothble.bean.BluetoothBean;
+import le.bluetooth.example.com.bluetoothble.manager.BluetoothLeHelper;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.

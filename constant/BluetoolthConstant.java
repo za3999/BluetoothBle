@@ -1,8 +1,6 @@
-package le.bluetooth.example.com.bluetoothble.bean;
+package le.bluetooth.example.com.bluetoothble.constant;
 
 import java.util.UUID;
-
-import le.bluetooth.example.com.bluetoothble.SampleGattAttributes;
 
 /**
  * Created by zhengcf on 2017/7/25.

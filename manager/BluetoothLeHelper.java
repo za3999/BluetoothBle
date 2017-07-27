@@ -1,4 +1,4 @@
-package le.bluetooth.example.com.bluetoothble;
+package le.bluetooth.example.com.bluetoothble.manager;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -22,7 +22,8 @@ import com.permissionlib.util.AndroidMPermissionHelper;
 import java.util.List;
 import java.util.UUID;
 
-import le.bluetooth.example.com.bluetoothble.bean.BluetoolthConstant;
+import le.bluetooth.example.com.bluetoothble.constant.SampleGattAttributes;
+import le.bluetooth.example.com.bluetoothble.constant.BluetoolthConstant;
 
 /**
  * 蓝牙功能辅助类

@@ -34,7 +34,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import le.bluetooth.example.com.bluetoothble.BluetoothLeController.BindFailListener;
+import le.bluetooth.example.com.bluetoothble.constant.SampleGattAttributes;
+import le.bluetooth.example.com.bluetoothble.manager.BluetoothLeHelper;
+import le.bluetooth.example.com.bluetoothble.manager.BluetoothLeService;
 
 
 /**

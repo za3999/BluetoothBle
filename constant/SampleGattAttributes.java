@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package le.bluetooth.example.com.bluetoothble;
+package le.bluetooth.example.com.bluetoothble.constant;
 
 import java.util.HashMap;
 

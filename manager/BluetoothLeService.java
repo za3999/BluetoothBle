@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package le.bluetooth.example.com.bluetoothble;
+package le.bluetooth.example.com.bluetoothble.manager;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -35,6 +35,8 @@ import android.util.Log;
 
 import java.util.List;
 import java.util.UUID;
+
+import le.bluetooth.example.com.bluetoothble.constant.SampleGattAttributes;
 
 /**
  * Service for managing connection and data communication with a GATT server hosted on a
