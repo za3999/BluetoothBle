@@ -30,12 +30,14 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.danche.locklibrary.lock.bluetooth.BluetoothLeHelper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import le.bluetooth.example.com.bluetoothble.constant.SampleGattAttributes;
-import le.bluetooth.example.com.bluetoothble.manager.BluetoothLeHelper;
 import le.bluetooth.example.com.bluetoothble.manager.BluetoothLeService;
 
 
@@ -213,7 +215,8 @@ public class DeviceControlActivity extends Activity {
                             // If there is an active notification on a characteristic, clear
                             // it first so it doesn't update the data field on the user interface.
                             if (mNotifyCharacteristic != null) {
-                                helper.setCharacteristicNotification(mNotifyCharacteristic, false);
+                                helper.setCharacteristicNotification(mNotifyCharacteristic, UUID.fromString
+                                        (SampleGattAttributes.HEART_RATE_MEASUREMENT), false);
                                 mNotifyCharacteristic = null;
                             }
                             helper.readCharacteristic(characteristic);
@@ -223,7 +226,8 @@ public class DeviceControlActivity extends Activity {
 
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
                             mNotifyCharacteristic = characteristic;
-                            helper.setCharacteristicNotification(characteristic, true);
+                            helper.setCharacteristicNotification(characteristic, UUID.fromString
+                                    (SampleGattAttributes.HEART_RATE_MEASUREMENT), true);
                         } else {
                             Toast.makeText(getApplicationContext(), "notify enable", Toast.LENGTH_LONG).show();
                         }

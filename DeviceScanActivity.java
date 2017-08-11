@@ -33,10 +33,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.danche.locklibrary.lock.LockCallBackAdapter;
+import com.danche.locklibrary.lock.LockManager;
+import com.danche.locklibrary.lock.LockV3Imp;
+import com.danche.locklibrary.lock.bluetooth.BluetoothLeHelper;
+
 import java.util.ArrayList;
 
 import le.bluetooth.example.com.bluetoothble.bean.BluetoothBean;
-import le.bluetooth.example.com.bluetoothble.manager.BluetoothLeHelper;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
@@ -57,7 +61,7 @@ public class DeviceScanActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActionBar().setTitle(R.string.title_devices);
-        helper = BluetoothLeHelper.getInstance(getApplicationContext());
+        helper = BluetoothLeHelper.getInstance(this);
         if (!helper.isBluetoothLeSupport()) {
             Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
             finish();
@@ -105,7 +109,7 @@ public class DeviceScanActivity extends ListActivity {
         // Initializes list view adapter.
         mLeDeviceListAdapter = new LeDeviceListAdapter();
         setListAdapter(mLeDeviceListAdapter);
-        scanLeDevice(true);
+//        scanLeDevice(true);
     }
 
     @Override
