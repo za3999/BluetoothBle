@@ -33,6 +33,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.danche.locklibrary.lock.LockCallBackAdapter;
+import com.danche.locklibrary.lock.LockManager;
+import com.danche.locklibrary.lock.LockV3Imp;
 import com.danche.locklibrary.lock.bluetooth.BluetoothLeHelper;
 
 import java.util.ArrayList;
@@ -86,7 +89,14 @@ public class DeviceScanActivity extends ListActivity {
         switch (item.getItemId()) {
             case R.id.menu_scan:
                 mLeDeviceListAdapter.clear();
-                scanLeDevice(true);
+                LockManager.getInstance(getApplicationContext()).openLock(LockV3Imp.ADMIN_PASS, new
+                        LockCallBackAdapter() {
+                            @Override
+                            public void onOpenLock(boolean success) {
+                                Toast.makeText(getApplicationContext(), "success:" + success, Toast.LENGTH_LONG).show();
+                                invalidateOptionsMenu();
+                            }
+                        });
                 invalidateOptionsMenu();
                 break;
             case R.id.menu_stop:
