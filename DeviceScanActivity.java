@@ -89,7 +89,16 @@ public class DeviceScanActivity extends ListActivity {
         switch (item.getItemId()) {
             case R.id.menu_scan:
                 mLeDeviceListAdapter.clear();
-                scanLeDevice(true);
+//                scanLeDevice(true);
+                LockManager.getInstance(getApplicationContext()).openLock(LockV3Imp.ADMIN_PASS, new
+                        LockCallBackAdapter() {
+                            @Override
+                            public void onOpenLock(boolean success) {
+                                Toast.makeText(getApplicationContext(), "success:" + success, Toast.LENGTH_LONG).show();
+                                invalidateOptionsMenu();
+                            }
+                        });
+                invalidateOptionsMenu();
                 break;
             case R.id.menu_stop:
                 scanLeDevice(false);
